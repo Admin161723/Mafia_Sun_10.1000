@@ -775,8 +775,7 @@
         </div>
     </div>
 
-    <script src="auth.js"></script>
-<script>
+    <script>
 // ========== تنظیمات سرور ==========
 const JSONBIN_ID = '6984ae3a43b1c97be967c32b';
 const JSONBIN_KEY = '$2a$10$P2f/7ECPzq3HSI.6DSdcr.MaV748WQF7smMQL1bczP6YF4XKwjNvG';
@@ -1097,7 +1096,13 @@ class UserManager {
         this.blacklist = [];
         this.tempBannedUsers = [];
         this.adminBannedUsers = [];
-        this.loadFromServer();
+        this.init();
+    }
+
+    async init() {
+        await this.loadFromServer();
+        this.ensureSpecialUsersExist();
+        this.checkAutoLogin(); // بررسی ورود خودکار
     }
 
     async loadFromServer() {
@@ -1116,8 +1121,6 @@ class UserManager {
             console.error('❌ خطا در بارگذاری از سرور:', e);
             this.loadFromLocalStorage();
         }
-        
-        this.ensureSpecialUsersExist();
     }
 
     loadFromLocalStorage() {
@@ -1195,6 +1198,36 @@ class UserManager {
             }
         });
         this.saveToServer();
+    }
+
+    // ========== بررسی ورود خودکار ==========
+    checkAutoLogin() {
+        const loggedIn = localStorage.getItem(STORAGE_KEYS.LOGGED_IN);
+        const rememberMe = localStorage.getItem(STORAGE_KEYS.REMEMBER_ME);
+        const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+        
+        if (loggedIn === 'true' && rememberMe === 'true' && currentUser) {
+            console.log('🔄 کاربر قبلاً وارد شده، هدایت خودکار به بازی...');
+            
+            // نمایش پیام ورود خودکار
+            const autoLoginMsg = document.getElementById('autoLoginMessage');
+            const loginSection = document.getElementById('login-section');
+            const signupSection = document.getElementById('signup-section');
+            const tabs = document.querySelector('.tabs');
+            
+            if (autoLoginMsg) autoLoginMsg.style.display = 'block';
+            if (loginSection) loginSection.style.display = 'none';
+            if (signupSection) signupSection.style.display = 'none';
+            if (tabs) tabs.style.display = 'none';
+            
+            // هدایت به صفحه اصلی بعد از ۱ ثانیه
+            setTimeout(() => {
+                window.location.href = GAME_PAGE_URL;
+            }, 1000);
+            
+            return true;
+        }
+        return false;
     }
 
     isPhoneExists(phone) {
@@ -1347,7 +1380,6 @@ class UIManager {
         this.initTabs();
         this.initAgeSelector();
         this.initForms();
-        setTimeout(() => this.checkLoggedIn(), 500);
     }
 
     showLoading(message = 'در حال پردازش...') {
@@ -1384,28 +1416,6 @@ class UIManager {
 
     clearErrors() {
         document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
-    }
-
-    checkLoggedIn() {
-        const user = this.userManager.checkLoggedIn();
-        if (user) {
-            const autoLoginMsg = document.getElementById('autoLoginMessage');
-            const loginSection = document.getElementById('login-section');
-            const signupSection = document.getElementById('signup-section');
-            const tabs = document.querySelector('.tabs');
-
-            if (autoLoginMsg) autoLoginMsg.style.display = 'block';
-            if (loginSection) loginSection.style.display = 'none';
-            if (signupSection) signupSection.style.display = 'none';
-            if (tabs) tabs.style.display = 'none';
-
-            if (user.role === 'creator') document.getElementById('creatorRoleInfo').style.display = 'flex';
-            else if (user.role === 'support') document.getElementById('supportInfo').style.display = 'flex';
-            else if (user.role === 'observer') document.getElementById('observerInfo').style.display = 'flex';
-            else if (user.role === 'admin') document.getElementById('adminInfo').style.display = 'flex';
-
-            setTimeout(() => window.location.href = GAME_PAGE_URL, 1000);
-        }
     }
 
     initTabs() {
