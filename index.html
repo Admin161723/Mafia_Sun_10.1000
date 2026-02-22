@@ -777,7 +777,9 @@
 
     <script src="auth.js"></script>
 <script>
-// ========== تنظیمات - لینک‌های اصلی ==========
+// ========== تنظیمات سرور ==========
+const JSONBIN_ID = '6984ae3a43b1c97be967c32b';
+const JSONBIN_KEY = '$2a$10$P2f/7ECPzq3HSI.6DSdcr.MaV748WQF7smMQL1bczP6YF4XKwjNvG';
 const GAME_PAGE_URL = 'https://admin161723.github.io/Mafia_Sun_10000.88.189/';
 const CREATOR_PHONE = '09904844031';
 const CREATOR_PASSWORD = 'Admin16172-matin-1000';
@@ -811,7 +813,18 @@ const AVATARS = {
     'creator2': 'https://s8.uupload.ir/files/inshot_20260222_024612597_9s3b.png'
 };
 
-// ========== کاربران ویژه (شامل همه پنل‌ها) ==========
+// ========== آواتارهای فروشگاه ==========
+const SHOP_AVATARS = [
+    { id: 'new13', num: '#۰۲۱', price: 230, currency: 'gems' },
+    { id: 'new14', num: '#۰۲۲', price: 250, currency: 'gems' },
+    { id: 'new15', num: '#۰۲۳', price: 180, currency: 'gems' },
+    { id: 'new16', num: '#۰۲۴', price: 200, currency: 'gems' },
+    { id: 'new17', num: '#۰۲۵', price: 210, currency: 'gems' },
+    { id: 'new18', num: '#۰۲۶', price: 100, currency: 'gems' },
+    { id: 'new19', num: '#۰۲۷', price: 280, currency: 'gems' }
+];
+
+// ========== کاربران ویژه ==========
 const SPECIAL_USERS = [
     // سازنده بازی (کاربر 1) - تیک آبی
     {
@@ -919,17 +932,6 @@ const SPECIAL_USERS = [
     }
 ];
 
-// ========== آواتارهای فروشگاه ==========
-const SHOP_AVATARS = [
-    { id: 'new13', num: '#۰۲۱', price: 230, currency: 'gems' },
-    { id: 'new14', num: '#۰۲۲', price: 250, currency: 'gems' },
-    { id: 'new15', num: '#۰۲۳', price: 180, currency: 'gems' },
-    { id: 'new16', num: '#۰۲۴', price: 200, currency: 'gems' },
-    { id: 'new17', num: '#۰۲۵', price: 210, currency: 'gems' },
-    { id: 'new18', num: '#۰۲۶', price: 100, currency: 'gems' },
-    { id: 'new19', num: '#۰۲۷', price: 280, currency: 'gems' }
-];
-
 // ========== کلیدهای ذخیره‌سازی ==========
 const STORAGE_KEYS = {
     USERS: 'mafiaSun_users',
@@ -942,6 +944,54 @@ const STORAGE_KEYS = {
     REPORTS: 'mafiaSun_reports',
     ADMIN_BANS: 'mafiaSun_adminBans'
 };
+
+// ========== توابع سرور JSONBin ==========
+async function fetchFromServer() {
+    try {
+        console.log('🔄 در حال دریافت اطلاعات از سرور...');
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+            headers: { 
+                'X-Master-Key': JSONBIN_KEY,
+                'X-Bin-Meta': 'false'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`خطای سرور: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ اطلاعات با موفقیت از سرور دریافت شد');
+        return data;
+    } catch (error) {
+        console.error('❌ خطا در دریافت از سرور:', error);
+        return null;
+    }
+}
+
+async function saveToServer(data) {
+    try {
+        console.log('🔄 در حال ذخیره اطلاعات در سرور...');
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': JSONBIN_KEY
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error(`خطای سرور: ${response.status}`);
+        }
+
+        console.log('✅ اطلاعات با موفقیت در سرور ذخیره شد');
+        return true;
+    } catch (error) {
+        console.error('❌ خطا در ذخیره در سرور:', error);
+        return false;
+    }
+}
 
 // ========== تابع پاک کردن همه داده‌ها ==========
 function clearAllData() {
@@ -963,11 +1013,6 @@ function showBanMessage(banInfo) {
 
     banReason.innerHTML = `📝 دلیل: ${banInfo.reason || 'تخلف'}`;
     bannedBy.innerHTML = `👤 بن شده توسط: ${banInfo.bannedByName || 'مدیریت'}`;
-
-    localStorage.removeItem(STORAGE_KEYS.LOGGED_IN);
-    localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
-    localStorage.removeItem(STORAGE_KEYS.USER_DATA);
 
     if (banInfo.expiry) {
         const expiryDate = new Date(banInfo.expiry).toLocaleString('fa-IR');
@@ -1047,68 +1092,84 @@ function checkForMessagesOnLoad() {
 // ========== مدیریت کاربران ==========
 class UserManager {
     constructor() {
-        this.users = this.loadUsers();
+        this.users = {};
         this.currentUser = null;
-        this.blacklist = this.loadBlacklist();
-        this.tempBannedUsers = this.loadTempBans();
-        this.adminBannedUsers = this.loadAdminBans();
+        this.blacklist = [];
+        this.tempBannedUsers = [];
+        this.adminBannedUsers = [];
+        this.loadFromServer();
+    }
+
+    async loadFromServer() {
+        try {
+            const serverData = await fetchFromServer();
+            if (serverData) {
+                this.users = serverData.users || {};
+                this.blacklist = serverData.blacklist || [];
+                this.tempBannedUsers = serverData.tempBannedUsers || [];
+                this.adminBannedUsers = serverData.adminBannedUsers || [];
+                console.log('✅ اطلاعات از سرور بارگذاری شد');
+            } else {
+                this.loadFromLocalStorage();
+            }
+        } catch (e) {
+            console.error('❌ خطا در بارگذاری از سرور:', e);
+            this.loadFromLocalStorage();
+        }
+        
         this.ensureSpecialUsersExist();
     }
 
-    loadBlacklist() {
+    loadFromLocalStorage() {
         try {
-            const saved = localStorage.getItem(STORAGE_KEYS.BLACKLIST);
-            return saved ? JSON.parse(saved) : [];
-        } catch (e) { return []; }
-    }
-
-    loadTempBans() {
-        try {
-            const saved = localStorage.getItem(STORAGE_KEYS.TEMP_BANS);
-            if (saved) {
-                const bans = JSON.parse(saved);
+            const savedUsers = localStorage.getItem(STORAGE_KEYS.USERS);
+            this.users = savedUsers ? JSON.parse(savedUsers) : {};
+            
+            const savedBlacklist = localStorage.getItem(STORAGE_KEYS.BLACKLIST);
+            this.blacklist = savedBlacklist ? JSON.parse(savedBlacklist) : [];
+            
+            const savedTempBans = localStorage.getItem(STORAGE_KEYS.TEMP_BANS);
+            if (savedTempBans) {
+                this.tempBannedUsers = JSON.parse(savedTempBans);
                 const now = Date.now();
-                const activeBans = bans.filter(ban => ban.expiry > now);
-                if (activeBans.length !== bans.length) {
-                    localStorage.setItem(STORAGE_KEYS.TEMP_BANS, JSON.stringify(activeBans));
-                }
-                return activeBans;
+                this.tempBannedUsers = this.tempBannedUsers.filter(ban => ban.expiry > now);
             }
-            return [];
-        } catch (e) { return []; }
-    }
-
-    loadAdminBans() {
-        try {
-            const saved = localStorage.getItem(STORAGE_KEYS.ADMIN_BANS);
-            if (saved) {
-                const bans = JSON.parse(saved);
+            
+            const savedAdminBans = localStorage.getItem(STORAGE_KEYS.ADMIN_BANS);
+            if (savedAdminBans) {
+                this.adminBannedUsers = JSON.parse(savedAdminBans);
                 const now = Date.now();
-                const activeBans = bans.filter(ban => ban.expiry > now);
-                if (activeBans.length !== bans.length) {
-                    localStorage.setItem(STORAGE_KEYS.ADMIN_BANS, JSON.stringify(activeBans));
-                }
-                return activeBans;
+                this.adminBannedUsers = this.adminBannedUsers.filter(ban => ban.expiry > now);
             }
-            return [];
-        } catch (e) { return []; }
+            
+            console.log('✅ اطلاعات از حافظه محلی بارگذاری شد');
+        } catch (e) {
+            console.error('❌ خطا در بارگذاری از localStorage:', e);
+        }
     }
 
-    saveBlacklist() {
+    async saveToServer() {
+        const data = {
+            users: this.users,
+            blacklist: this.blacklist,
+            tempBannedUsers: this.tempBannedUsers,
+            adminBannedUsers: this.adminBannedUsers,
+            lastUpdate: new Date().toISOString()
+        };
+        
+        // ذخیره در localStorage به عنوان پشتیبان
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(this.users));
         localStorage.setItem(STORAGE_KEYS.BLACKLIST, JSON.stringify(this.blacklist));
-    }
-
-    saveTempBans() {
         localStorage.setItem(STORAGE_KEYS.TEMP_BANS, JSON.stringify(this.tempBannedUsers));
-    }
-
-    saveAdminBans() {
         localStorage.setItem(STORAGE_KEYS.ADMIN_BANS, JSON.stringify(this.adminBannedUsers));
+        
+        // ذخیره در سرور
+        await saveToServer(data);
     }
 
     ensureSpecialUsersExist() {
         SPECIAL_USERS.forEach(specialUser => {
-            if (!this.isPhoneExists(specialUser.phone)) {
+            if (!this.users[specialUser.phone]) {
                 const userData = {
                     id: specialUser.userId,
                     phone: specialUser.phone,
@@ -1133,25 +1194,7 @@ class UserManager {
                 this.users[specialUser.phone] = userData;
             }
         });
-        this.saveUsers();
-    }
-
-    loadUsers() {
-        try {
-            const savedUsers = localStorage.getItem(STORAGE_KEYS.USERS);
-            return savedUsers ? JSON.parse(savedUsers) : {};
-        } catch (e) {
-            console.error('خطا در بارگذاری کاربران:', e);
-            return {};
-        }
-    }
-
-    saveUsers() {
-        try {
-            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(this.users));
-        } catch (e) {
-            console.error('خطا در ذخیره کاربران:', e);
-        }
+        this.saveToServer();
     }
 
     isPhoneExists(phone) {
@@ -1197,7 +1240,9 @@ class UserManager {
         return null;
     }
 
-    login(phone, password) {
+    async login(phone, password) {
+        await this.loadFromServer();
+        
         const user = this.users[phone];
 
         if (!user || user.password !== password) {
@@ -1210,7 +1255,7 @@ class UserManager {
         }
 
         user.lastLogin = new Date().toISOString();
-        this.saveUsers();
+        await this.saveToServer();
 
         return { success: true, user: user };
     }
@@ -1229,9 +1274,9 @@ class UserManager {
                 userPhone: user.phone,
                 userName: user.name,
                 userRole: user.role,
-                hasBlueTick: user.hasBlueTick,
-                hasOrangeTick: user.hasOrangeTick,
-                hasBrownTick: user.hasBrownTick,
+                hasBlueTick: user.hasBlueTick || false,
+                hasOrangeTick: user.hasOrangeTick || false,
+                hasBrownTick: user.hasBrownTick || false,
                 isCreator: user.role === 'creator' || user.role === 'support',
                 userGems: user.gems,
                 userCoins: user.coins,
@@ -1241,11 +1286,24 @@ class UserManager {
                 userStats: user.stats
             };
             localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(gameData));
+            
+            // ذخیره در sessionStorage برای انتقال بین صفحات
+            sessionStorage.setItem('user_logged_in', 'true');
+            sessionStorage.setItem('user_id', user.id.toString());
+            sessionStorage.setItem('user_name', user.name);
+            sessionStorage.setItem('user_avatar', user.settings.avatar);
+            sessionStorage.setItem('user_blue_tick', user.hasBlueTick ? 'true' : 'false');
+            sessionStorage.setItem('user_orange_tick', user.hasOrangeTick ? 'true' : 'false');
+            sessionStorage.setItem('user_brown_tick', user.hasBrownTick ? 'true' : 'false');
+            sessionStorage.setItem('user_role', user.role);
 
-            if (rememberMe) localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, 'true');
-            else localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
+            if (rememberMe) {
+                localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, 'true');
+            } else {
+                localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
+            }
         } catch (e) {
-            console.error('خطا در ذخیره کاربر فعلی:', e);
+            console.error('❌ خطا در ذخیره کاربر فعلی:', e);
         }
     }
 
@@ -1278,6 +1336,7 @@ class UserManager {
         localStorage.removeItem(STORAGE_KEYS.LOGGED_IN);
         localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
         localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+        sessionStorage.clear();
     }
 }
 
@@ -1288,7 +1347,7 @@ class UIManager {
         this.initTabs();
         this.initAgeSelector();
         this.initForms();
-        setTimeout(() => this.checkLoggedIn(), 100);
+        setTimeout(() => this.checkLoggedIn(), 500);
     }
 
     showLoading(message = 'در حال پردازش...') {
@@ -1407,7 +1466,7 @@ class UIManager {
     initForms() {
         const loginForm = document.getElementById('loginForm');
         if (loginForm) {
-            loginForm.addEventListener('submit', (e) => {
+            loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 this.clearErrors();
 
@@ -1427,45 +1486,43 @@ class UIManager {
 
                 this.showLoading('در حال ورود...');
 
-                setTimeout(() => {
-                    const result = this.userManager.login(phone, password);
+                const result = await this.userManager.login(phone, password);
 
-                    if (result.success) {
-                        this.userManager.setCurrentUser(result.user, rememberMe);
+                if (result.success) {
+                    this.userManager.setCurrentUser(result.user, rememberMe);
 
-                        if (result.user.role === 'creator') {
-                            document.getElementById('creatorRoleInfo').style.display = 'flex';
-                            this.showSuccess('خوش آمدید سازنده بازی!');
-                        } else if (result.user.role === 'support') {
-                            document.getElementById('supportInfo').style.display = 'flex';
-                            this.showSuccess('خوش آمدید! شما عضو تیم پشتیبانی هستید');
-                        } else if (result.user.role === 'observer') {
-                            document.getElementById('observerInfo').style.display = 'flex';
-                            this.showSuccess('خوش آمدید! شما مقام ناظر دارید');
-                        } else if (result.user.role === 'admin') {
-                            document.getElementById('adminInfo').style.display = 'flex';
-                            this.showSuccess('خوش آمدید! شما مقام ادمین هستید');
-                        } else {
-                            this.showSuccess('ورود موفقیت‌آمیز!');
-                        }
-
-                        setTimeout(() => window.location.href = GAME_PAGE_URL, 1000);
+                    if (result.user.role === 'creator') {
+                        document.getElementById('creatorRoleInfo').style.display = 'flex';
+                        this.showSuccess('خوش آمدید سازنده بازی!');
+                    } else if (result.user.role === 'support') {
+                        document.getElementById('supportInfo').style.display = 'flex';
+                        this.showSuccess('خوش آمدید! شما عضو تیم پشتیبانی هستید');
+                    } else if (result.user.role === 'observer') {
+                        document.getElementById('observerInfo').style.display = 'flex';
+                        this.showSuccess('خوش آمدید! شما مقام ناظر دارید');
+                    } else if (result.user.role === 'admin') {
+                        document.getElementById('adminInfo').style.display = 'flex';
+                        this.showSuccess('خوش آمدید! شما مقام ادمین هستید');
                     } else {
-                        this.hideLoading();
-                        if (result.banned) {
-                            this.userManager.logout();
-                            showBanMessage(result.banInfo);
-                        } else {
-                            this.showError(result.message, 'login-phone-error');
-                        }
+                        this.showSuccess('ورود موفقیت‌آمیز!');
                     }
-                }, 800);
+
+                    setTimeout(() => window.location.href = GAME_PAGE_URL, 1000);
+                } else {
+                    this.hideLoading();
+                    if (result.banned) {
+                        this.userManager.logout();
+                        showBanMessage(result.banInfo);
+                    } else {
+                        this.showError(result.message, 'login-phone-error');
+                    }
+                }
             });
         }
 
         const signupForm = document.getElementById('signupForm');
         if (signupForm) {
-            signupForm.addEventListener('submit', (e) => {
+            signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 this.clearErrors();
 
@@ -1497,7 +1554,7 @@ class UIManager {
 
                 this.showLoading('در حال ثبت‌نام...');
 
-                setTimeout(() => {
+                setTimeout(async () => {
                     const newUser = {
                         id: Date.now(),
                         phone: phone,
@@ -1521,7 +1578,7 @@ class UIManager {
                     };
 
                     this.userManager.users[phone] = newUser;
-                    this.userManager.saveUsers();
+                    await this.userManager.saveToServer();
                     this.userManager.setCurrentUser(newUser, rememberMe);
 
                     this.showSuccess('ثبت‌نام موفقیت‌آمیز!');
