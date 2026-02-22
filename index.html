@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ثبت نام | Mafia Sun</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body {
+            background: url('https://s8.uupload.ir/files/img_20260208_144146_117_lxby.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        :root {
+            --dark-bg: rgba(20, 20, 30, 0.85);
+            --dark-card: rgba(30, 35, 45, 0.92);
+            --dark-border: rgba(255, 255, 255, 0.1);
+            --dark-text: #ffffff;
+            --dark-text-secondary: #b0b0b0;
+            --primary-color: #FF9800;
+            --primary-light: rgba(255, 152, 0, 0.2);
+            --mafia-red: #D32F2F;
+            --success-green: #4CAF50;
+            --support-blue: #3b9eff;
+            --observer-orange: #ffaa00;
+            --admin-brown: #8B4513;
+            --creator-blue: #3b9eff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .auth-card {
+            background: var(--dark-card);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            padding: 35px 30px;
+            border: 1px solid var(--dark-border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            color: var(--dark-text);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--mafia-red), var(--primary-color));
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--dark-bg);
+            border-radius: 14px;
+            padding: 6px;
+            margin-bottom: 35px;
+            border: 1px solid var(--dark-border);
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 14px;
+            border: none;
+            background: transparent;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--dark-text-secondary);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: var(--primary-color);
+            color: black;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo h1 {
+            color: white;
+            font-size: 2.4rem;
+            font-weight: 900;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            color: var(--primary-color);
+            animation: sunRotate 10s linear infinite;
+        }
+
+        @keyframes sunRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo p {
+            color: var(--dark-text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--dark-text);
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 17px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.2);
+        }
+
+        .age-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 8px;
+            margin-top: 8px;
+        }
+
+        .age-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 152, 0, 0.2);
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .age-btn:hover {
+            background: var(--primary-color);
+            color: black;
+        }
+
+        .age-display {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .age-label {
+            font-size: 0.9rem;
+            color: var(--dark-text-secondary);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 19px;
+            background: linear-gradient(135deg, var(--primary-color), #E65100);
+            color: black;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 152, 0, 0.4);
+            background: linear-gradient(135deg, #FFB74D, #F57C00);
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error-message {
+            color: var(--mafia-red);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: none;
+            text-align: center;
+            background: rgba(211, 47, 47, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--mafia-red);
+        }
+
+        .success-message {
+            color: var(--success-green);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: none;
+            text-align: center;
+            background: rgba(76, 175, 80, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--success-green);
+        }
+
+        .info-box {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .info-box i {
+            margin-left: 5px;
+        }
+
+        .role-box {
+            background: rgba(59, 158, 255, 0.1);
+            border: 1px solid var(--support-blue);
+            border-radius: 10px;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: var(--support-blue);
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .role-box.support {
+            border-color: var(--support-blue);
+            color: var(--support-blue);
+        }
+
+        .role-box.observer {
+            border-color: var(--observer-orange);
+            color: var(--observer-orange);
+        }
+
+        .role-box.admin {
+            border-color: var(--admin-brown);
+            color: var(--admin-brown);
+        }
+
+        .role-box.creator {
+            border-color: var(--creator-blue);
+            color: var(--creator-blue);
+        }
+
+        .role-box i {
+            font-size: 1rem;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--primary-color);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .auto-login-message {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 1rem;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 152, 0, 0.1);
+            border-radius: 10px;
+            border: 1px solid var(--primary-color);
+        }
+
+        .ban-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            background: linear-gradient(145deg, #2a0a0a, #1a0505);
+            border: 4px solid #ff5555;
+            border-radius: 30px;
+            padding: 40px 30px;
+            z-index: 100000;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255,85,85,0.5);
+            animation: banPulse 2s infinite;
+            text-align: center;
+            display: none;
+        }
+
+        .report-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            background: linear-gradient(145deg, #1a2a0a, #0f1a05);
+            border: 4px solid #4CAF50;
+            border-radius: 30px;
+            padding: 40px 30px;
+            z-index: 100000;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(76,175,80,0.5);
+            text-align: center;
+            display: none;
+        }
+
+        @keyframes banPulse {
+            0% { box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 30px rgba(255,85,85,0.5); }
+            50% { box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 60px rgba(255,85,85,0.8); }
+            100% { box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 30px rgba(255,85,85,0.5); }
+        }
+
+        .ban-icon {
+            font-size: 80px;
+            color: #ff5555;
+            margin-bottom: 20px;
+            animation: shake 0.5s ease-in-out infinite;
+        }
+
+        .report-icon {
+            font-size: 80px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .ban-title {
+            font-size: 36px;
+            font-weight: 900;
+            color: #ff5555;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255,85,85,0.5);
+        }
+
+        .report-title {
+            font-size: 36px;
+            font-weight: 900;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(76,175,80,0.5);
+        }
+
+        .ban-message-text {
+            font-size: 20px;
+            color: white;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .ban-reason {
+            font-size: 24px;
+            color: #ffaa00;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,85,85,0.2);
+            border-radius: 15px;
+            border: 2px solid #ff5555;
+            font-weight: 700;
+        }
+
+        .report-details {
+            font-size: 18px;
+            color: white;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(76,175,80,0.2);
+            border-radius: 15px;
+            border: 2px solid #4CAF50;
+            text-align: right;
+        }
+
+        .report-details div {
+            margin-bottom: 10px;
+        }
+
+        .ban-duration-info {
+            font-size: 18px;
+            color: #ff9999;
+            margin-bottom: 30px;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+
+        .ban-banned-by {
+            font-size: 16px;
+            color: #3b9eff;
+            margin-bottom: 30px;
+        }
+
+        .ban-countdown {
+            font-size: 20px;
+            color: #ffaa00;
+            margin-bottom: 20px;
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        .ban-close-btn {
+            background: #ff5555;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #ffaa00;
+        }
+
+        .report-close-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #ffaa00;
+        }
+
+        .ban-close-btn:hover {
+            transform: scale(1.1);
+            background: #ff4444;
+            box-shadow: 0 0 30px rgba(255,85,85,0.8);
+        }
+
+        .report-close-btn:hover {
+            transform: scale(1.1);
+            background: #45a049;
+            box-shadow: 0 0 30px rgba(76,175,80,0.8);
+        }
+
+        .clear-data-btn {
+            background: rgba(255, 85, 85, 0.2);
+            color: #ff5555;
+            border: 1px solid #ff5555;
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .clear-data-btn:hover {
+            background: #ff5555;
+            color: white;
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 30px 25px;
+                border-radius: 20px;
+            }
+
+            .logo h1 {
+                font-size: 2rem;
+            }
+
+            .form-group input {
+                padding: 15px;
+            }
+
+            .ban-title {
+                font-size: 28px;
+            }
+
+            .ban-message-text {
+                font-size: 18px;
+            }
+
+            .ban-reason {
+                font-size: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText">در حال پردازش...</div>
+    </div>
+
+    <!-- پیام بن -->
+    <div class="ban-message" id="banMessage">
+        <div class="ban-icon">
+            <i class="fas fa-gavel"></i>
+        </div>
+        <div class="ban-title" id="banTitle">
+            ⚠️ بن شدید ⚠️
+        </div>
+        <div class="ban-message-text" id="banMessageText">
+            شما توسط مدیریت بازی بن شده‌اید
+        </div>
+        <div class="ban-reason" id="banReason">
+            دلیل: تخلف
+        </div>
+        <div class="ban-duration-info" id="banDuration">
+            مدت بن: دائمی
+        </div>
+        <div class="ban-banned-by" id="bannedBy">
+            بن شده توسط: سازنده بازی
+        </div>
+        <div class="ban-countdown" id="banCountdown">
+
+        </div>
+        <button class="ban-close-btn" onclick="closeBanMessage()">
+            <i class="fas fa-check"></i> متوجه شدم
+        </button>
+    </div>
+
+    <!-- پیام گزارش -->
+    <div class="report-message" id="reportMessage">
+        <div class="report-icon">
+            <i class="fas fa-flag"></i>
+        </div>
+        <div class="report-title" id="reportTitle">
+            📋 گزارش ارسال شد
+        </div>
+        <div class="ban-message-text" id="reportMessageText">
+            گزارش شما با موفقیت به مدیریت ارسال شد
+        </div>
+        <div class="report-details" id="reportDetails">
+            <div><i class="fas fa-user"></i> <span id="reportedUserName">کاربر</span></div>
+            <div><i class="fas fa-tag"></i> <span id="reportReason">بی احترامی</span></div>
+            <div><i class="fas fa-align-left"></i> <span id="reportDescription">توضیحات</span></div>
+        </div>
+        <button class="report-close-btn" onclick="closeReportMessage()">
+            <i class="fas fa-check"></i> متوجه شدم
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="auth-card">
+            <div class="logo">
+                <h1><i class="fas fa-sun logo-icon"></i>Mafia Sun</h1>
+                <p>توسعه دهنده شرکت سازیتون</p>
+            </div>
+
+            <div class="info-box" id="creatorInfo" style="display: none;">
+                <i class="fas fa-crown"></i> شما با شماره سازنده وارد شده‌اید
+            </div>
+
+            <div class="role-box creator" id="creatorRoleInfo">
+                <i class="fas fa-check-circle" style="color: #3b9eff;"></i> شما سازنده بازی هستید (تیک آبی)
+            </div>
+
+            <div class="role-box support" id="supportInfo">
+                <i class="fas fa-check-circle" style="color: #3b9eff;"></i> شما عضو تیم پشتیبانی هستید (تیک آبی)
+            </div>
+
+            <div class="role-box observer" id="observerInfo">
+                <i class="fas fa-check-circle" style="color: #ffaa00;"></i> شما مقام ناظر دارید (تیک نارنجی)
+            </div>
+
+            <div class="role-box admin" id="adminInfo">
+                <i class="fas fa-check-circle" style="color: #8B4513;"></i> شما مقام ادمین دارید (تیک قهوه‌ای)
+            </div>
+
+            <div id="autoLoginMessage" class="auto-login-message" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i> در حال انتقال خودکار به بازی...
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" id="loginTab">
+                    <i class="fas fa-user-secret"></i> ورود
+                </button>
+                <button class="tab" id="signupTab">
+                    <i class="fas fa-crown"></i> ثبت‌نام
+                </button>
+            </div>
+
+            <div id="login-section" class="form-section active">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="login-phone">
+                            <i class="fas fa-mobile-alt"></i> شماره موبایل
+                        </label>
+                        <input type="tel" id="login-phone" placeholder="مثال: 09123456789" required 
+                               pattern="09[0-9]{9}" maxlength="11" dir="ltr" autocomplete="off">
+                        <div class="error-message" id="login-phone-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">
+                            <i class="fas fa-lock"></i> رمز عبور
+                        </label>
+                        <input type="password" id="login-password" placeholder="رمز عبور خود را وارد کنید" required autocomplete="off">
+                        <div class="error-message" id="login-password-error"></div>
+                    </div>
+
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="remember-me" checked style="width: 20px; height: 20px;">
+                        <label for="remember-me" style="margin: 0; color: var(--dark-text);">مرا به خاطر بسپار</label>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="loginBtn">
+                        <i class="fas fa-door-open"></i> ورود و شروع بازی
+                    </button>
+                </form>
+            </div>
+
+            <div id="signup-section" class="form-section">
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signup-phone">
+                            <i class="fas fa-mobile-alt"></i> شماره موبایل
+                        </label>
+                        <input type="tel" id="signup-phone" placeholder="مثال: 09123456789" required 
+                               pattern="09[0-9]{9}" maxlength="11" dir="ltr" autocomplete="off">
+                        <div class="error-message" id="signup-phone-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="display-name">
+                            <i class="fas fa-user"></i> نام نمایشی
+                        </label>
+                        <input type="text" id="display-name" placeholder="نامی که در بازی نمایش داده می‌شود" required maxlength="30" autocomplete="off">
+                        <div class="error-message" id="display-name-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-password">
+                            <i class="fas fa-key"></i> رمز عبور
+                        </label>
+                        <input type="password" id="signup-password" placeholder="حداقل ۸ کاراکتر" required minlength="8" autocomplete="off">
+                        <div class="error-message" id="signup-password-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-user-clock"></i> رده سنی
+                        </label>
+                        <div class="age-selector">
+                            <button type="button" class="age-btn minus-btn">−</button>
+                            <div class="age-display">18</div>
+                            <button type="button" class="age-btn plus-btn">+</button>
+                        </div>
+                        <div class="age-label">سال</div>
+                        <input type="hidden" id="age" name="age" value="18">
+                    </div>
+
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="remember-me-signup" checked style="width: 20px; height: 20px;">
+                        <label for="remember-me-signup" style="margin: 0; color: var(--dark-text);">مرا به خاطر بسپار</label>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="signupBtn">
+                        <i class="fas fa-handshake"></i> ثبت‌نام و شروع بازی
+                    </button>
+                </form>
+            </div>
+
+            <div class="success-message" id="globalSuccess"></div>
+            <div class="error-message" id="globalError"></div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+<script>
+// ========== تنظیمات - لینک‌های اصلی ==========
+const GAME_PAGE_URL = 'https://admin161723.github.io/Mafia_Sun_10000.88.189/';
+const CREATOR_PHONE = '09904844031';
+const CREATOR_PASSWORD = 'Admin16172-matin-1000';
+
+// ========== آواتارها ==========
+const AVATARS = {
+    'avatar1': 'https://s8.uupload.ir/files/inshot_20260208_214035107_wkwk.png',
+    'avatar2': 'https://s8.uupload.ir/files/inshot_20260208_214116629_6joe.png',
+    'ninja': 'https://s8.uupload.ir/files/inshot_20260212_151231364_umrq.png',
+    'samurai': 'https://s8.uupload.ir/files/inshot_20260212_151120584_7df6.png',
+    'avatar5': 'https://s8.uupload.ir/files/inshot_20260213_195059047_ln6h.png',
+    'avatar6': 'https://s8.uupload.ir/files/inshot_20260213_195217329_u6to.png',
+    'avatar7': 'https://s8.uupload.ir/files/inshot_20260213_093421818_xwo9.png',
+    'avatar8': 'https://s8.uupload.ir/files/inshot_20260213_093508335_djbv.png',
+    'avatar9': 'https://s8.uupload.ir/files/inshot_20260217_183611271_wt7s.png',
+    'avatar10': 'https://s8.uupload.ir/files/inshot_20260216_031531507_0k5x.png',
+    'avatar11': 'https://s8.uupload.ir/files/inshot_20260216_031443956_hnie.png',
+    'avatar12': 'https://s8.uupload.ir/files/inshot_20260216_031355260_y72k.png',
+    
+    // آواتارهای فروشگاه
+    'new13': 'https://s8.uupload.ir/files/inshot_20260222_023037731_8cfr.png',
+    'new14': 'https://s8.uupload.ir/files/inshot_20260222_023128005_w5f7.png',
+    'new15': 'https://s8.uupload.ir/files/inshot_20260222_023210312_6bdu.png',
+    'new16': 'https://s8.uupload.ir/files/inshot_20260222_023303810_19ml.png',
+    'new17': 'https://s8.uupload.ir/files/inshot_20260222_023342992_amud.png',
+    'new18': 'https://s8.uupload.ir/files/inshot_20260222_023414644_ur8u.png',
+    'new19': 'https://s8.uupload.ir/files/inshot_20260222_023446979_ovp2.png',
+    
+    // آواتارهای انحصاری سازنده
+    'creator1': 'https://s8.uupload.ir/files/inshot_20260222_023557680_m4qc.png',
+    'creator2': 'https://s8.uupload.ir/files/inshot_20260222_024612597_9s3b.png'
+};
+
+// ========== کاربران ویژه (شامل همه پنل‌ها) ==========
+const SPECIAL_USERS = [
+    // سازنده بازی (کاربر 1) - تیک آبی
+    {
+        phone: '09904844031',
+        userId: 1,
+        name: 'ᴀᴍᴏᴍɪᴛɪ',
+        gems: Infinity,
+        coins: Infinity,
+        password: 'Admin16172-matin-1000',
+        role: 'creator',
+        hasBlueTick: true,
+        hasOrangeTick: false,
+        hasBrownTick: false,
+        ownedAvatars: ['avatar1', 'avatar2', 'ninja', 'samurai', 'avatar5', 'avatar6', 'avatar7', 'avatar8', 'avatar9', 'avatar10', 'avatar11', 'avatar12', 'creator1', 'creator2']
+    },
+    
+    // پشتیبانی 1 (کاربر 3) - تیک آبی
+    {
+        phone: '09940940720',
+        userId: 3,
+        name: '♛✯ Èr£åñ_ʂɧ ✯♛',
+        gems: 99999,
+        coins: 99999,
+        password: 'Erfan.sh85',
+        role: 'support',
+        hasBlueTick: true,
+        hasOrangeTick: false,
+        hasBrownTick: false,
+        ownedAvatars: ['avatar1', 'avatar2', 'ninja', 'samurai', 'avatar5', 'avatar6', 'avatar7', 'avatar8']
+    },
+    
+    // پشتیبانی 2 (کاربر 2) - تیک آبی
+    {
+        phone: '09212327833',
+        userId: 2,
+        name: 'Programmer',
+        gems: 99999,
+        coins: 99999,
+        password: '010101010',
+        role: 'support',
+        hasBlueTick: true,
+        hasOrangeTick: false,
+        hasBrownTick: false,
+        ownedAvatars: ['avatar1', 'avatar2', 'ninja', 'samurai', 'avatar5', 'avatar6', 'avatar7', 'avatar8']
+    },
+    
+    // ناظر (کاربر 100) - تیک نارنجی
+    {
+        phone: '09053065179',
+        userId: 100,
+        name: '•°Ami®=dar©°•',
+        gems: 2000,
+        coins: 5000,
+        password: 'amirhosein1386',
+        role: 'observer',
+        hasBlueTick: false,
+        hasOrangeTick: true,
+        hasBrownTick: false,
+        ownedAvatars: ['avatar1', 'avatar2', 'ninja', 'samurai']
+    },
+    
+    // ادمین 1 - elijah021 (کاربر 89) - تیک قهوه‌ای
+    {
+        phone: '09051396023',
+        userId: 89,
+        name: 'elijah021',
+        gems: 500,
+        coins: 5000,
+        password: 'ARAZ1381',
+        role: 'admin',
+        hasBlueTick: false,
+        hasOrangeTick: false,
+        hasBrownTick: true,
+        ownedAvatars: ['avatar1', 'avatar2', 'ninja', 'samurai', 'avatar5', 'avatar6']
+    },
+    
+    // ادمین 2 - ʝᴀᴅᴜᴳᴀʀ (کاربر 80) - تیک قهوه‌ای
+    {
+        phone: '09392865423',
+        userId: 80,
+        name: 'ʝᴀᴅᴜᴳᴀʀ',
+        gems: 500,
+        coins: 5000,
+        password: 'mehdii137123',
+        role: 'admin',
+        hasBlueTick: false,
+        hasOrangeTick: false,
+        hasBrownTick: true,
+        ownedAvatars: ['avatar1', 'avatar2', 'ninja', 'samurai', 'avatar5', 'avatar6']
+    },
+    
+    // ادمین 3 - FARZAM (کاربر 81) - تیک قهوه‌ای
+    {
+        phone: '09305075756',
+        userId: 81,
+        name: 'FARZAM',
+        gems: 500,
+        coins: 5000,
+        password: '123456789',
+        role: 'admin',
+        hasBlueTick: false,
+        hasOrangeTick: false,
+        hasBrownTick: true,
+        ownedAvatars: ['avatar1', 'avatar2', 'ninja', 'samurai', 'avatar5', 'avatar6']
+    }
+];
+
+// ========== آواتارهای فروشگاه ==========
+const SHOP_AVATARS = [
+    { id: 'new13', num: '#۰۲۱', price: 230, currency: 'gems' },
+    { id: 'new14', num: '#۰۲۲', price: 250, currency: 'gems' },
+    { id: 'new15', num: '#۰۲۳', price: 180, currency: 'gems' },
+    { id: 'new16', num: '#۰۲۴', price: 200, currency: 'gems' },
+    { id: 'new17', num: '#۰۲۵', price: 210, currency: 'gems' },
+    { id: 'new18', num: '#۰۲۶', price: 100, currency: 'gems' },
+    { id: 'new19', num: '#۰۲۷', price: 280, currency: 'gems' }
+];
+
+// ========== کلیدهای ذخیره‌سازی ==========
+const STORAGE_KEYS = {
+    USERS: 'mafiaSun_users',
+    CURRENT_USER: 'mafiaSun_currentUser',
+    USER_DATA: 'mafiaSun_userData',
+    REMEMBER_ME: 'mafiaSun_rememberMe',
+    LOGGED_IN: 'mafiaSun_loggedIn',
+    BLACKLIST: 'mafiaSun_blacklist',
+    TEMP_BANS: 'mafiaSun_tempBans',
+    REPORTS: 'mafiaSun_reports',
+    ADMIN_BANS: 'mafiaSun_adminBans'
+};
+
+// ========== تابع پاک کردن همه داده‌ها ==========
+function clearAllData() {
+    if (confirm('آیا از پاک کردن همه داده‌ها اطمینان دارید؟ این عمل غیرقابل بازگشت است!')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        alert('✅ همه داده‌ها پاک شدند. صفحه دوباره بارگذاری می‌شود.');
+        window.location.reload();
+    }
+}
+
+// ========== توابع نمایش پیام ==========
+function showBanMessage(banInfo) {
+    const banModal = document.getElementById('banMessage');
+    const banReason = document.getElementById('banReason');
+    const banDuration = document.getElementById('banDuration');
+    const bannedBy = document.getElementById('bannedBy');
+    const banCountdown = document.getElementById('banCountdown');
+
+    banReason.innerHTML = `📝 دلیل: ${banInfo.reason || 'تخلف'}`;
+    bannedBy.innerHTML = `👤 بن شده توسط: ${banInfo.bannedByName || 'مدیریت'}`;
+
+    localStorage.removeItem(STORAGE_KEYS.LOGGED_IN);
+    localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    localStorage.removeItem(STORAGE_KEYS.USER_DATA);
+
+    if (banInfo.expiry) {
+        const expiryDate = new Date(banInfo.expiry).toLocaleString('fa-IR');
+        banDuration.innerHTML = `⏳ مدت بن: موقت (تا ${expiryDate})`;
+        updateCountdown(banInfo.expiry);
+        const interval = setInterval(() => updateCountdown(banInfo.expiry), 1000);
+        window.banInterval = interval;
+    } else {
+        banDuration.innerHTML = `🚫 مدت بن: دائمی`;
+        if (banCountdown) banCountdown.style.display = 'none';
+    }
+
+    banModal.style.display = 'block';
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('signup-section').style.display = 'none';
+    document.querySelector('.tabs').style.display = 'none';
+}
+
+function showReportMessage(reportInfo) {
+    const reportModal = document.getElementById('reportMessage');
+    const reportedUserName = document.getElementById('reportedUserName');
+    const reportReason = document.getElementById('reportReason');
+    const reportDescription = document.getElementById('reportDescription');
+
+    reportedUserName.innerHTML = `👤 کاربر گزارش شده: ${reportInfo.reportedName}`;
+    reportReason.innerHTML = `🏷️ دلیل: ${reportInfo.reason}`;
+    reportDescription.innerHTML = `📝 توضیحات: ${reportInfo.description}`;
+
+    reportModal.style.display = 'block';
+    setTimeout(() => reportModal.style.display = 'none', 5000);
+}
+
+function updateCountdown(expiryTime) {
+    const now = Date.now();
+    const diff = expiryTime - now;
+    const banCountdown = document.getElementById('banCountdown');
+
+    if (diff <= 0) {
+        banCountdown.innerHTML = '⏰ مدت بن به پایان رسیده، می‌توانید دوباره وارد شوید';
+        if (window.banInterval) clearInterval(window.banInterval);
+        return;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    banCountdown.innerHTML = `⏰ زمان باقی‌مانده: ${hours} ساعت ${minutes} دقیقه ${seconds} ثانیه`;
+}
+
+function closeBanMessage() {
+    document.getElementById('banMessage').style.display = 'none';
+    window.location.reload();
+}
+
+function closeReportMessage() {
+    document.getElementById('reportMessage').style.display = 'none';
+}
+
+function checkForMessagesOnLoad() {
+    const banInfo = sessionStorage.getItem('banInfo');
+    if (banInfo) {
+        try {
+            showBanMessage(JSON.parse(banInfo));
+            sessionStorage.removeItem('banInfo');
+        } catch (e) { console.error('خطا:', e); }
+    }
+
+    const reportInfo = sessionStorage.getItem('reportInfo');
+    if (reportInfo) {
+        try {
+            showReportMessage(JSON.parse(reportInfo));
+            sessionStorage.removeItem('reportInfo');
+        } catch (e) { console.error('خطا:', e); }
+    }
+}
+
+// ========== مدیریت کاربران ==========
+class UserManager {
+    constructor() {
+        this.users = this.loadUsers();
+        this.currentUser = null;
+        this.blacklist = this.loadBlacklist();
+        this.tempBannedUsers = this.loadTempBans();
+        this.adminBannedUsers = this.loadAdminBans();
+        this.ensureSpecialUsersExist();
+    }
+
+    loadBlacklist() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEYS.BLACKLIST);
+            return saved ? JSON.parse(saved) : [];
+        } catch (e) { return []; }
+    }
+
+    loadTempBans() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEYS.TEMP_BANS);
+            if (saved) {
+                const bans = JSON.parse(saved);
+                const now = Date.now();
+                const activeBans = bans.filter(ban => ban.expiry > now);
+                if (activeBans.length !== bans.length) {
+                    localStorage.setItem(STORAGE_KEYS.TEMP_BANS, JSON.stringify(activeBans));
+                }
+                return activeBans;
+            }
+            return [];
+        } catch (e) { return []; }
+    }
+
+    loadAdminBans() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEYS.ADMIN_BANS);
+            if (saved) {
+                const bans = JSON.parse(saved);
+                const now = Date.now();
+                const activeBans = bans.filter(ban => ban.expiry > now);
+                if (activeBans.length !== bans.length) {
+                    localStorage.setItem(STORAGE_KEYS.ADMIN_BANS, JSON.stringify(activeBans));
+                }
+                return activeBans;
+            }
+            return [];
+        } catch (e) { return []; }
+    }
+
+    saveBlacklist() {
+        localStorage.setItem(STORAGE_KEYS.BLACKLIST, JSON.stringify(this.blacklist));
+    }
+
+    saveTempBans() {
+        localStorage.setItem(STORAGE_KEYS.TEMP_BANS, JSON.stringify(this.tempBannedUsers));
+    }
+
+    saveAdminBans() {
+        localStorage.setItem(STORAGE_KEYS.ADMIN_BANS, JSON.stringify(this.adminBannedUsers));
+    }
+
+    ensureSpecialUsersExist() {
+        SPECIAL_USERS.forEach(specialUser => {
+            if (!this.isPhoneExists(specialUser.phone)) {
+                const userData = {
+                    id: specialUser.userId,
+                    phone: specialUser.phone,
+                    password: specialUser.password,
+                    name: specialUser.name,
+                    age: 25,
+                    role: specialUser.role,
+                    hasBlueTick: specialUser.hasBlueTick || false,
+                    hasOrangeTick: specialUser.hasOrangeTick || false,
+                    hasBrownTick: specialUser.hasBrownTick || false,
+                    gems: specialUser.gems,
+                    coins: specialUser.coins,
+                    registeredAt: new Date().toISOString(),
+                    lastLogin: null,
+                    stats: { wins: 0, losses: 0, gamesPlayed: 0, totalHours: 0, observerCount: 0 },
+                    settings: {
+                        avatar: 'avatar1',
+                        ownedAvatars: specialUser.ownedAvatars || ['avatar1', 'avatar2'],
+                        editCount: 0
+                    }
+                };
+                this.users[specialUser.phone] = userData;
+            }
+        });
+        this.saveUsers();
+    }
+
+    loadUsers() {
+        try {
+            const savedUsers = localStorage.getItem(STORAGE_KEYS.USERS);
+            return savedUsers ? JSON.parse(savedUsers) : {};
+        } catch (e) {
+            console.error('خطا در بارگذاری کاربران:', e);
+            return {};
+        }
+    }
+
+    saveUsers() {
+        try {
+            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(this.users));
+        } catch (e) {
+            console.error('خطا در ذخیره کاربران:', e);
+        }
+    }
+
+    isPhoneExists(phone) {
+        return this.users.hasOwnProperty(phone);
+    }
+
+    checkUserBan(phone) {
+        const user = this.users[phone];
+        if (!user) return null;
+
+        if (this.blacklist.includes(user.id)) {
+            return {
+                banned: true,
+                permanent: true,
+                reason: 'بن دائمی توسط مدیریت',
+                bannedByName: 'مدیریت'
+            };
+        }
+
+        const tempBan = this.tempBannedUsers.find(b => b.userId === user.id);
+        if (tempBan) {
+            return {
+                banned: true,
+                permanent: false,
+                reason: tempBan.reason,
+                expiry: tempBan.expiry,
+                bannedByName: tempBan.bannedByName
+            };
+        }
+
+        const adminBan = this.adminBannedUsers.find(b => b.userId === user.id);
+        if (adminBan) {
+            return {
+                banned: true,
+                permanent: false,
+                reason: adminBan.reason,
+                expiry: adminBan.expiry,
+                bannedByName: adminBan.bannedByName,
+                isAdminBan: true
+            };
+        }
+
+        return null;
+    }
+
+    login(phone, password) {
+        const user = this.users[phone];
+
+        if (!user || user.password !== password) {
+            return { success: false, message: '❌ شماره موبایل یا رمز عبور اشتباه است' };
+        }
+
+        const banStatus = this.checkUserBan(phone);
+        if (banStatus) {
+            return { success: false, banned: true, banInfo: banStatus, message: '⛔ شما بن شده‌اید' };
+        }
+
+        user.lastLogin = new Date().toISOString();
+        this.saveUsers();
+
+        return { success: true, user: user };
+    }
+
+    setCurrentUser(user, rememberMe = true) {
+        this.currentUser = user;
+        try {
+            localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify({
+                phone: user.phone,
+                loginTime: new Date().toISOString()
+            }));
+            localStorage.setItem(STORAGE_KEYS.LOGGED_IN, 'true');
+
+            const gameData = {
+                userId: user.id,
+                userPhone: user.phone,
+                userName: user.name,
+                userRole: user.role,
+                hasBlueTick: user.hasBlueTick,
+                hasOrangeTick: user.hasOrangeTick,
+                hasBrownTick: user.hasBrownTick,
+                isCreator: user.role === 'creator' || user.role === 'support',
+                userGems: user.gems,
+                userCoins: user.coins,
+                ownedAvatars: user.settings.ownedAvatars,
+                currentAvatar: user.settings.avatar,
+                editCount: user.settings.editCount,
+                userStats: user.stats
+            };
+            localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(gameData));
+
+            if (rememberMe) localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, 'true');
+            else localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
+        } catch (e) {
+            console.error('خطا در ذخیره کاربر فعلی:', e);
+        }
+    }
+
+    checkLoggedIn() {
+        const loggedIn = localStorage.getItem(STORAGE_KEYS.LOGGED_IN);
+        const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+
+        if (loggedIn !== 'true' || !currentUser) return null;
+
+        try {
+            const { phone } = JSON.parse(currentUser);
+            const banStatus = this.checkUserBan(phone);
+            if (banStatus) {
+                localStorage.removeItem(STORAGE_KEYS.LOGGED_IN);
+                localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
+                localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+                localStorage.removeItem(STORAGE_KEYS.USER_DATA);
+                setTimeout(() => showBanMessage(banStatus), 500);
+                return null;
+            }
+
+            return this.users[phone] || null;
+        } catch (e) {
+            console.error('خطا در بررسی لاگین:', e);
+            return null;
+        }
+    }
+
+    logout() {
+        localStorage.removeItem(STORAGE_KEYS.LOGGED_IN);
+        localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    }
+}
+
+// ========== مدیریت رابط کاربری ==========
+class UIManager {
+    constructor(userManager) {
+        this.userManager = userManager;
+        this.initTabs();
+        this.initAgeSelector();
+        this.initForms();
+        setTimeout(() => this.checkLoggedIn(), 100);
+    }
+
+    showLoading(message = 'در حال پردازش...') {
+        const overlay = document.getElementById('loadingOverlay');
+        const text = document.getElementById('loadingText');
+        if (overlay && text) {
+            text.textContent = message;
+            overlay.style.display = 'flex';
+        }
+    }
+
+    hideLoading() {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) overlay.style.display = 'none';
+    }
+
+    showError(message, elementId = 'globalError') {
+        const errorElement = document.getElementById(elementId);
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => errorElement.style.display = 'none', 3000);
+        }
+    }
+
+    showSuccess(message, elementId = 'globalSuccess') {
+        const successElement = document.getElementById(elementId);
+        if (successElement) {
+            successElement.textContent = message;
+            successElement.style.display = 'block';
+            setTimeout(() => successElement.style.display = 'none', 3000);
+        }
+    }
+
+    clearErrors() {
+        document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+    }
+
+    checkLoggedIn() {
+        const user = this.userManager.checkLoggedIn();
+        if (user) {
+            const autoLoginMsg = document.getElementById('autoLoginMessage');
+            const loginSection = document.getElementById('login-section');
+            const signupSection = document.getElementById('signup-section');
+            const tabs = document.querySelector('.tabs');
+
+            if (autoLoginMsg) autoLoginMsg.style.display = 'block';
+            if (loginSection) loginSection.style.display = 'none';
+            if (signupSection) signupSection.style.display = 'none';
+            if (tabs) tabs.style.display = 'none';
+
+            if (user.role === 'creator') document.getElementById('creatorRoleInfo').style.display = 'flex';
+            else if (user.role === 'support') document.getElementById('supportInfo').style.display = 'flex';
+            else if (user.role === 'observer') document.getElementById('observerInfo').style.display = 'flex';
+            else if (user.role === 'admin') document.getElementById('adminInfo').style.display = 'flex';
+
+            setTimeout(() => window.location.href = GAME_PAGE_URL, 1000);
+        }
+    }
+
+    initTabs() {
+        const loginTab = document.getElementById('loginTab');
+        const signupTab = document.getElementById('signupTab');
+        const loginSection = document.getElementById('login-section');
+        const signupSection = document.getElementById('signup-section');
+
+        if (loginTab && signupTab) {
+            loginTab.addEventListener('click', () => {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                loginSection.classList.add('active');
+                signupSection.classList.remove('active');
+                this.clearErrors();
+            });
+
+            signupTab.addEventListener('click', () => {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                signupSection.classList.add('active');
+                loginSection.classList.remove('active');
+                this.clearErrors();
+            });
+        }
+    }
+
+    initAgeSelector() {
+        const minusBtn = document.querySelector('.minus-btn');
+        const plusBtn = document.querySelector('.plus-btn');
+        const ageDisplay = document.querySelector('.age-display');
+        const ageInput = document.getElementById('age');
+
+        if (minusBtn && plusBtn && ageDisplay && ageInput) {
+            let currentAge = 18;
+            minusBtn.addEventListener('click', () => {
+                if (currentAge > 13) {
+                    currentAge--;
+                    ageDisplay.textContent = currentAge;
+                    ageInput.value = currentAge;
+                }
+            });
+
+            plusBtn.addEventListener('click', () => {
+                if (currentAge < 100) {
+                    currentAge++;
+                    ageDisplay.textContent = currentAge;
+                    ageInput.value = currentAge;
+                }
+            });
+        }
+    }
+
+    validatePhone(phone) {
+        return /^09[0-9]{9}$/.test(phone);
+    }
+
+    initForms() {
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.clearErrors();
+
+                const phone = document.getElementById('login-phone').value.trim();
+                const password = document.getElementById('login-password').value.trim();
+                const rememberMe = document.getElementById('remember-me').checked;
+
+                if (!this.validatePhone(phone)) {
+                    this.showError('شماره موبایل معتبر نیست', 'login-phone-error');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    this.showError('رمز عبور باید حداقل ۶ کاراکتر باشد', 'login-password-error');
+                    return;
+                }
+
+                this.showLoading('در حال ورود...');
+
+                setTimeout(() => {
+                    const result = this.userManager.login(phone, password);
+
+                    if (result.success) {
+                        this.userManager.setCurrentUser(result.user, rememberMe);
+
+                        if (result.user.role === 'creator') {
+                            document.getElementById('creatorRoleInfo').style.display = 'flex';
+                            this.showSuccess('خوش آمدید سازنده بازی!');
+                        } else if (result.user.role === 'support') {
+                            document.getElementById('supportInfo').style.display = 'flex';
+                            this.showSuccess('خوش آمدید! شما عضو تیم پشتیبانی هستید');
+                        } else if (result.user.role === 'observer') {
+                            document.getElementById('observerInfo').style.display = 'flex';
+                            this.showSuccess('خوش آمدید! شما مقام ناظر دارید');
+                        } else if (result.user.role === 'admin') {
+                            document.getElementById('adminInfo').style.display = 'flex';
+                            this.showSuccess('خوش آمدید! شما مقام ادمین هستید');
+                        } else {
+                            this.showSuccess('ورود موفقیت‌آمیز!');
+                        }
+
+                        setTimeout(() => window.location.href = GAME_PAGE_URL, 1000);
+                    } else {
+                        this.hideLoading();
+                        if (result.banned) {
+                            this.userManager.logout();
+                            showBanMessage(result.banInfo);
+                        } else {
+                            this.showError(result.message, 'login-phone-error');
+                        }
+                    }
+                }, 800);
+            });
+        }
+
+        const signupForm = document.getElementById('signupForm');
+        if (signupForm) {
+            signupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.clearErrors();
+
+                const phone = document.getElementById('signup-phone').value.trim();
+                const displayName = document.getElementById('display-name').value.trim();
+                const password = document.getElementById('signup-password').value.trim();
+                const age = document.getElementById('age').value;
+                const rememberMe = document.getElementById('remember-me-signup').checked;
+
+                if (!this.validatePhone(phone)) {
+                    this.showError('شماره موبایل معتبر نیست', 'signup-phone-error');
+                    return;
+                }
+
+                if (displayName.length < 3) {
+                    this.showError('نام نمایشی باید حداقل ۳ کاراکتر باشد', 'display-name-error');
+                    return;
+                }
+
+                if (password.length < 8) {
+                    this.showError('رمز عبور باید حداقل ۸ کاراکتر باشد', 'signup-password-error');
+                    return;
+                }
+
+                if (this.userManager.isPhoneExists(phone)) {
+                    this.showError('این شماره موبایل قبلاً ثبت‌نام کرده است', 'signup-phone-error');
+                    return;
+                }
+
+                this.showLoading('در حال ثبت‌نام...');
+
+                setTimeout(() => {
+                    const newUser = {
+                        id: Date.now(),
+                        phone: phone,
+                        password: password,
+                        name: displayName,
+                        age: parseInt(age),
+                        role: 'normal',
+                        hasBlueTick: false,
+                        hasOrangeTick: false,
+                        hasBrownTick: false,
+                        gems: 100,
+                        coins: 600,
+                        registeredAt: new Date().toISOString(),
+                        lastLogin: new Date().toISOString(),
+                        stats: { wins: 0, losses: 0, gamesPlayed: 0, totalHours: 0, observerCount: 0 },
+                        settings: {
+                            avatar: 'avatar1',
+                            ownedAvatars: ['avatar1', 'avatar2'],
+                            editCount: 0
+                        }
+                    };
+
+                    this.userManager.users[phone] = newUser;
+                    this.userManager.saveUsers();
+                    this.userManager.setCurrentUser(newUser, rememberMe);
+
+                    this.showSuccess('ثبت‌نام موفقیت‌آمیز!');
+                    setTimeout(() => window.location.href = GAME_PAGE_URL, 1000);
+                }, 800);
+            });
+        }
+    }
+}
+
+// ========== راه‌اندازی ==========
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 راه‌اندازی صفحه ثبت‌نام...');
+    console.log('🎮 لیست کاربران ویژه:');
+    SPECIAL_USERS.forEach(user => {
+        console.log(`   📱 ${user.phone} - ${user.name} (${user.role}) - تیک: ${user.hasBlueTick ? 'آبی' : user.hasOrangeTick ? 'نارنجی' : user.hasBrownTick ? 'قهوه‌ای' : 'ندارد'}`);
+    });
+
+    checkForMessagesOnLoad();
+
+    const userManager = new UserManager();
+    const uiManager = new UIManager(userManager);
+
+    window.userManager = userManager;
+    window.uiManager = uiManager;
+    window.closeBanMessage = closeBanMessage;
+    window.closeReportMessage = closeReportMessage;
+    window.clearAllData = clearAllData;
+});
+</script>
+</body>
+</html>
